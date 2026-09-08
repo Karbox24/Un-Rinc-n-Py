@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { ShuffledQuestion, GameAnswer, GameSession } from '../types/trivia';
-import { INITIAL_TEST_QUESTIONS, EXTENDED_PARAGUAY_QUESTIONS } from '../data/questions';
+import { MASTER_PARAGUAY_QUESTIONS, getRandomQuestions } from '../data/questions';
 import { shuffleArray, prepareShuffledQuestion } from '../lib/utils';
 import { recordGameSession } from '../lib/firebase';
 
@@ -77,14 +77,12 @@ export function useTriviaGame() {
       updatePlayerProfile(activeNick, activeAvatar);
       setQuestionMode(mode);
 
-      // Elegir conjunto de preguntas según el modo
-      const basePool = mode === 'test10' ? INITIAL_TEST_QUESTIONS : EXTENDED_PARAGUAY_QUESTIONS;
+      // Elegir conjunto de preguntas de forma 100% aleatoria del banco exhaustivo de 60+ preguntas
+      const selectedPool = mode === 'test10'
+        ? getRandomQuestions(10)
+        : shuffleArray(MASTER_PARAGUAY_QUESTIONS);
 
-      // Barajar las preguntas seleccionadas
-      const randomizedPool = shuffleArray(basePool);
-      const selectedPool = mode === 'test10' ? randomizedPool.slice(0, 10) : randomizedPool;
-
-      // Barajar las respuestas de cada pregunta
+      // Barajar las respuestas de cada pregunta de forma independiente para que las opciones A, B, C, D nunca sean predecibles
       const prepared = selectedPool.map(prepareShuffledQuestion);
 
       setGameQuestions(prepared);
