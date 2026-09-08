@@ -1,0 +1,33 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Registro de partidas (Estadísticas anónimas de juego)
+    match /game_sessions/{sessionId} {
+      allow create: if request.resource.data.nickname is string
+                    && request.resource.data.nickname.size() > 0
+                    && request.resource.data.nickname.size() <= 30
+                    && request.resource.data.score is number
+                    && request.resource.data.score >= 0;
+      allow read: if true;
+      allow update, delete: if false;
+    }
+
+    // Comentarios y feedback post-partida
+    match /feedback/{feedbackId} {
+      allow create: if request.resource.data.nickname is string
+                    && request.resource.data.rating is number
+                    && request.resource.data.rating >= 1
+                    && request.resource.data.rating <= 5;
+      allow read: if true;
+      allow update, delete: if false;
+    }
+
+    // Ranking global preparado para Fase 2
+    match /global_ranking/{rankingId} {
+      allow read: if true;
+      allow create, update: if request.resource.data.nickname is string
+                            && request.resource.data.highestScore is number;
+      allow delete: if false;
+    }
+  }
+}

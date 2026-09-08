@@ -1,0 +1,6 @@
+{
+  "name": "Un Rincon Py",
+  "description": "Trivia interactiva de cultura y mitología paraguaya.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
