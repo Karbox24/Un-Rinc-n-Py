@@ -34,125 +34,78 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
 }) => {
   const progressPercent = Math.round(((currentIndex + 1) / totalQuestions) * 100);
   const isLastQuestion = currentIndex + 1 >= totalQuestions;
-  const avatarObj = AVATAR_OPTIONS.find((a) => a.id === avatar);
-
-  // Letras para las opciones
-  const optionLetters = ['A', 'B', 'C', 'D'];
-
-  const getCategoryBadge = (category: string) => {
-    switch (category) {
-      case 'mitologia':
-        return { label: question.categoryName || 'Mitos Guaraníes', color: 'text-purple-300 bg-purple-950/70 border-purple-700/60', icon: '👹' };
-      case 'gastronomia':
-        return { label: question.categoryName || 'Gastronomía Típica', color: 'text-amber-300 bg-amber-950/70 border-amber-700/60', icon: '🍲' };
-      case 'tradiciones':
-        return { label: question.categoryName || 'Tradiciones & Costumbres', color: 'text-emerald-300 bg-emerald-950/70 border-emerald-700/60', icon: '🧉' };
-      case 'idioma_guarani':
-        return { label: question.categoryName || 'Idioma Guaraní', color: 'text-blue-300 bg-blue-950/70 border-blue-700/60', icon: '📜' };
-      case 'historia':
-        return { label: question.categoryName || 'Historia & Héroes', color: 'text-rose-300 bg-rose-950/70 border-rose-700/60', icon: '🏛️' };
-      default:
-        return { label: question.categoryName || 'Geografía Paraguaya', color: 'text-teal-300 bg-teal-950/70 border-teal-700/60', icon: '🗺️' };
-    }
-  };
-
-  const catMeta = getCategoryBadge(question.category);
   const isPlayerCorrect = selectedOption !== null && selectedOption === question.correctAnswerIndex;
 
   return (
-    <div className="max-w-4xl mx-auto flex flex-col gap-4 sm:gap-5 py-1 sm:py-2">
-      {/* Barra Superior de Estado y Progreso */}
-      <div className="bg-slate-900 rounded-3xl p-4 sm:p-5 border border-slate-800 shadow-xl">
-        {/* Fila 1: Jugador + Puntuación + Racha */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          {/* Datos del Jugador */}
-          <div className="flex items-center gap-2 min-w-0">
-            <span className="w-8 h-8 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-lg shrink-0">
-              {avatarObj?.icon || '🧉'}
-            </span>
-            <div className="min-w-0">
-              <span className="text-xs sm:text-sm font-extrabold text-white block truncate">
-                {nickname}
-              </span>
-              <span className="text-[10px] text-slate-400 font-medium">
-                Pregunta {currentIndex + 1} de {totalQuestions}
-              </span>
-            </div>
-          </div>
-
-          {/* Temporizador y Puntos */}
-          <div className="flex items-center gap-2 shrink-0">
+    <div className="w-full max-w-[540px] mx-auto flex flex-col gap-4 py-1">
+      {/* Barra Superior Minimalista de Progreso y Datos */}
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between text-xs text-[#757575] font-medium px-1">
+          <span className="text-[#1A1A1A] font-semibold">
+            Pregunta {currentIndex + 1} de {totalQuestions}
+          </span>
+          <div className="flex items-center gap-3">
             {streak > 1 && (
-              <span className="flex items-center gap-1 font-extrabold text-amber-400 bg-amber-950/60 px-2.5 py-1 rounded-xl text-xs border border-amber-500/40 animate-pulse">
-                <Flame className="w-3.5 h-3.5 fill-amber-400" />
-                {streak}x
+              <span className="text-emerald-700 font-bold">
+                {streak} seguidas
               </span>
             )}
-
-            <div className="flex items-center gap-1.5 font-extrabold text-amber-300 bg-slate-800 px-3 py-1 rounded-xl text-xs sm:text-sm border border-slate-700">
-              <Trophy className="w-3.5 h-3.5 text-amber-400" />
+            <span className="font-semibold text-[#1A1A1A]">
               {score} pts
-            </div>
-
-            <div className="flex items-center gap-1 text-slate-300 bg-slate-800 px-2.5 py-1 rounded-xl text-xs font-mono border border-slate-700">
-              <Clock className="w-3 h-3 text-slate-400" />
+            </span>
+            <span className="text-[#757575]">
               {formatSeconds(durationSeconds)}
-            </div>
+            </span>
           </div>
         </div>
 
-        {/* Barra de progreso tricolor */}
-        <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5">
+        {/* Barra de Progreso limpia estilo Duolingo */}
+        <div className="w-full bg-[#EADCCF] h-3 rounded-full overflow-hidden">
           <div
-            className="bg-gradient-to-r from-red-600 via-white to-blue-600 h-full rounded-full transition-all duration-300 ease-out"
+            className="bg-[#1A3A5F] h-full rounded-full transition-all duration-300 ease-out"
             style={{ width: `${progressPercent}%` }}
           ></div>
         </div>
+      </div>
 
-        {/* Categoría Cultural */}
-        <div className="flex items-center justify-between text-xs text-slate-400 mt-2.5 font-medium">
-          <span className={`px-2.5 py-0.5 rounded-lg border text-[11px] font-bold flex items-center gap-1.5 ${catMeta.color}`}>
-            <span>{catMeta.icon}</span> {catMeta.label}
-          </span>
-          <span className="text-[11px] text-slate-400">
-            Progreso: {progressPercent}%
-          </span>
+      {/* Tarjeta de Pregunta: blanca, con borde superior de 4px con colores de bandera Paraguay: rojo #D52B1E y azul #0038A8 */}
+      <div className="bg-white border border-[#EADCCF] rounded-[16px] overflow-hidden shadow-sm flex flex-col justify-center min-h-[140px]">
+        {/* Borde superior de 4px con colores de la bandera de Paraguay */}
+        <div className="h-[4px] w-full flex">
+          <div className="w-1/2 bg-[#D52B1E]" />
+          <div className="w-1/2 bg-[#0038A8]" />
+        </div>
+
+        <div className="p-6">
+          {question.categoryName && (
+            <span className="text-[12px] font-semibold text-[#8B1A1A] uppercase tracking-wider text-center mb-2 block">
+              {question.categoryName}
+            </span>
+          )}
+          {/* Texto pregunta: font-size 22px, negro #1A1A1A, centrado */}
+          <h2 className="text-[22px] text-[#1A1A1A] font-semibold text-center leading-snug">
+            {question.question}
+          </h2>
         </div>
       </div>
 
-      {/* Tarjeta Principal de la Pregunta */}
-      <div className="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl relative overflow-hidden">
-        <div className="text-[11px] font-bold uppercase tracking-wider text-amber-400 mb-2 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Conocimiento Paraguayo
-        </div>
-        <h2 className="text-lg sm:text-2xl font-black text-white leading-relaxed tracking-tight">
-          {question.question}
-        </h2>
-      </div>
-
-      {/* Opciones de Respuesta Aleatorias: Grandes, táctiles y claras */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+      {/* Botones respuesta: 4 botones, blancos, borde #E0E0E0, altura 56px, texto 18px, uno debajo del otro con gap 12px. Hover: fondo #F0F0F0 */}
+      <div className="flex flex-col gap-[12px]">
         {question.options.map((optionText, index) => {
-          const letter = optionLetters[index] || '';
           const isSelected = selectedOption === index;
           const isCorrect = index === question.correctAnswerIndex;
 
-          let buttonClasses =
-            'relative w-full min-h-[58px] sm:min-h-[66px] p-4 sm:p-5 rounded-2xl border text-left transition-all font-medium text-sm sm:text-base flex items-center justify-between select-none ';
+          let btnStyle = 'w-full min-h-[56px] px-4 rounded-[16px] border border-[#EADCCF] bg-white text-[18px] text-[#1A1A1A] font-normal transition-colors flex items-center justify-between text-left select-none ';
 
           if (!isAnswerRevealed) {
-            buttonClasses +=
-              'bg-slate-900 border-slate-800 text-slate-100 hover:border-blue-500 hover:bg-slate-800/80 active:scale-[0.99] cursor-pointer shadow-md';
+            btnStyle += 'hover:bg-[#FFFBF5] active:bg-[#FFF0DB]/50 cursor-pointer shadow-2xs';
           } else {
             if (isCorrect) {
-              buttonClasses +=
-                'bg-emerald-950/90 border-emerald-500 text-white ring-2 ring-emerald-500 shadow-lg font-bold';
+              btnStyle += 'bg-emerald-50 border-emerald-500 text-emerald-900 font-medium';
             } else if (isSelected && !isCorrect) {
-              buttonClasses +=
-                'bg-rose-950/90 border-rose-500 text-rose-100 ring-2 ring-rose-500 shadow-lg';
+              btnStyle += 'bg-rose-50 border-rose-500 text-rose-900 font-medium';
             } else {
-              buttonClasses +=
-                'bg-slate-900/40 border-slate-800/60 text-slate-500 opacity-40 cursor-not-allowed';
+              btnStyle += 'bg-white opacity-40 cursor-not-allowed';
             }
           }
 
@@ -161,74 +114,42 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
               key={index}
               onClick={() => onSelectOption(index)}
               disabled={isAnswerRevealed}
-              className={buttonClasses}
+              className={btnStyle}
             >
-              <div className="flex items-center gap-3.5 min-w-0 pr-2">
-                <span
-                  className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center text-xs sm:text-sm font-black shrink-0 transition-colors shadow-xs ${
-                    isAnswerRevealed && isCorrect
-                      ? 'bg-emerald-500 text-white'
-                      : isAnswerRevealed && isSelected && !isCorrect
-                      ? 'bg-rose-500 text-white'
-                      : 'bg-slate-800 text-slate-300'
-                  }`}
-                >
-                  {letter}
-                </span>
-                <span className="leading-snug break-words">{optionText}</span>
-              </div>
+              <span className="leading-snug break-words pr-2">
+                {optionText}
+              </span>
 
               {isAnswerRevealed && isCorrect && (
-                <div className="flex items-center gap-1 shrink-0 ml-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-400" />
-                </div>
+                <Check className="w-5 h-5 text-emerald-600 shrink-0" />
               )}
               {isAnswerRevealed && isSelected && !isCorrect && (
-                <div className="flex items-center gap-1 shrink-0 ml-2">
-                  <XCircle className="w-5 h-5 text-rose-400" />
-                </div>
+                <X className="w-5 h-5 text-rose-600 shrink-0" />
               )}
             </button>
           );
         })}
       </div>
 
-      {/* Mensaje de Resultado Inmediato y Explicación Revelada */}
+      {/* Explicación cultural / Dato: limpio, blanco con borde suave */}
       {isAnswerRevealed && (
-        <div
-          className={`rounded-2xl p-5 border text-xs sm:text-sm leading-relaxed animate-in fade-in slide-in-from-bottom-2 duration-200 ${
-            isPlayerCorrect
-              ? 'bg-emerald-950/40 border-emerald-800/60 text-emerald-100'
-              : 'bg-rose-950/30 border-rose-800/60 text-rose-100'
-          }`}
-        >
-          <div className="flex items-center gap-2 font-black mb-1.5 text-sm sm:text-base">
-            {isPlayerCorrect ? (
-              <>
-                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-                <span className="text-emerald-300">¡Correcto! (+100 {streak > 1 ? `+${(streak - 1) * 20} racha` : ''} pts)</span>
-              </>
-            ) : (
-              <>
-                <XCircle className="w-5 h-5 text-rose-400 shrink-0" />
-                <span className="text-rose-300">¡Respuesta Incorrecta!</span>
-              </>
-            )}
+        <div className="bg-white border border-[#EADCCF] rounded-[16px] p-4 text-sm text-[#424242] shadow-sm">
+          <div className="font-semibold text-[#8B1A1A] mb-1">
+            {isPlayerCorrect ? '✓ ¡Iporã! (Correcto)' : '✕ Respuesta incorrecta'}
           </div>
-          <div className="text-slate-300 mt-2 pt-2 border-t border-slate-800/60">
-            <strong className="text-amber-300 block mb-1">Dato Cultural Guaraní:</strong>
+          <p className="text-xs sm:text-sm text-[#616161] leading-relaxed">
             {question.explanation}
-          </div>
+          </p>
         </div>
       )}
 
-      {/* Botón Siguiente Pregunta: Grande y cómodo para el pulgar */}
+      {/* Botón Siguiente Pregunta: #1A3A5F con hover #122A45 */}
       {isAnswerRevealed && (
         <button
           onClick={onNextQuestion}
-          className="w-full py-4 sm:py-5 px-8 rounded-2xl bg-gradient-to-r from-red-600 via-red-700 to-blue-700 text-white font-black text-base sm:text-lg tracking-wide shadow-xl shadow-red-600/25 hover:shadow-2xl hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-3 cursor-pointer"
+          className="w-full h-[56px] rounded-[16px] bg-[#1A3A5F] hover:bg-[#122A45] text-white text-[18px] font-semibold transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-[0.99]"
         >
-          <span>{isLastQuestion ? 'Ver Resultados Finales 🏁' : 'Siguiente Pregunta'}</span>
+          <span>{isLastQuestion ? 'Ver Resultados' : 'Continuar'}</span>
           <ArrowRight className="w-5 h-5" />
         </button>
       )}

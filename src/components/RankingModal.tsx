@@ -38,102 +38,97 @@ export const RankingModal: React.FC<RankingModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-md sm:max-w-lg bg-slate-900 rounded-3xl border border-slate-800 shadow-2xl p-6 sm:p-7 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
-
-        <div className="text-center mb-4">
-          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/50 px-2.5 py-0.5 rounded-full border border-amber-800/80 mb-1">
-            <Sparkles className="w-3 h-3 text-amber-400" /> Fase 2 • Cuadro de Honor
-          </span>
-          <h2 className="text-lg font-black text-white flex items-center justify-center gap-1.5">
-            <Trophy className="w-5 h-5 text-amber-500" /> Ranking Global
-          </h2>
-          <p className="text-xs text-slate-400 mt-0.5">
-            Los mejores puntajes sincronizados en Firestore
-          </p>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+      <div className="relative w-full max-w-md bg-white rounded-[16px] border border-[#EADCCF] shadow-lg overflow-hidden">
+        {/* Borde superior de 4px con colores de la bandera de Paraguay */}
+        <div className="h-[4px] w-full flex">
+          <div className="w-1/2 bg-[#D52B1E]" />
+          <div className="w-1/2 bg-[#0038A8]" />
         </div>
 
-        <div className="flex items-center justify-between text-xs text-slate-400 mb-2 px-1">
-          <span>Posición y Jugador</span>
+        <div className="p-6">
           <button
-            onClick={loadRanking}
-            disabled={loading}
-            className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1 text-[11px]"
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 text-[#757575] hover:text-[#1A1A1A] rounded-xl hover:bg-[#FFFBF5] transition-colors cursor-pointer"
           >
-            <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
-            Actualizar
+            <X className="w-4 h-4" />
           </button>
-        </div>
 
-        <div className="max-h-64 overflow-y-auto flex flex-col gap-1.5 pr-1">
-          {rankings.length === 0 ? (
-            <div className="text-center py-6 text-xs text-slate-400 bg-slate-50 dark:bg-slate-800/40 rounded-2xl border border-slate-100 dark:border-slate-800">
-              Aún no hay puntuaciones en el ranking. ¡Completá tu primera partida para aparecer aquí!
-            </div>
-          ) : (
-            rankings.map((item, idx) => {
-              const isCurrent =
-                currentPlayerNick &&
-                item.nickname.toLowerCase() === currentPlayerNick.toLowerCase();
-              return (
-                <div
-                  key={item.id || idx}
-                  className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all ${
-                    isCurrent
-                      ? 'border-blue-500 bg-blue-50/80 dark:bg-blue-950/40 font-bold'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5">
-                    <span
-                      className={`w-6 h-6 rounded-full flex items-center justify-center font-black text-[11px] ${
-                        idx === 0
-                          ? 'bg-amber-400 text-amber-950 shadow-sm'
-                          : idx === 1
-                          ? 'bg-slate-300 text-slate-900 shadow-sm'
-                          : idx === 2
-                          ? 'bg-amber-700 text-white shadow-sm'
-                          : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
-                      }`}
-                    >
-                      {idx + 1}
-                    </span>
-                    <div>
-                      <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1">
-                        {item.nickname}
-                        {isCurrent && (
-                          <span className="text-[9px] bg-blue-600 text-white px-1.5 py-0.2 rounded font-bold">
-                            TÚ
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-[10px] text-slate-400">
-                        {item.gamesPlayed} partidas • {item.accuracy}% acierto
+          <div className="text-center mb-4">
+            <h2 className="text-lg font-bold text-[#8B1A1A] flex items-center justify-center gap-1.5">
+              <Trophy className="w-5 h-5 text-[#8B1A1A]" /> Ranking Global
+            </h2>
+            <p className="text-xs text-[#757575] mt-0.5">
+              Los mejores puntajes oficiales sincronizados
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between text-xs text-[#757575] mb-2 px-1">
+            <span>Posición y Jugador</span>
+            <button
+              onClick={loadRanking}
+              disabled={loading}
+              className="text-[#1A3A5F] font-semibold hover:underline flex items-center gap-1 text-[11px] cursor-pointer"
+            >
+              <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+              Actualizar
+            </button>
+          </div>
+
+          <div className="max-h-64 overflow-y-auto flex flex-col gap-1.5 pr-1">
+            {rankings.length === 0 ? (
+              <div className="text-center py-6 text-xs text-[#757575] bg-[#FFFBF5] rounded-[12px] border border-[#EADCCF]">
+                Aún no hay puntuaciones en el ranking. ¡Completá tu primera partida para aparecer aquí!
+              </div>
+            ) : (
+              rankings.map((item, idx) => {
+                const isCurrent =
+                  currentPlayerNick &&
+                  item.nickname.toLowerCase() === currentPlayerNick.toLowerCase();
+                return (
+                  <div
+                    key={item.id || idx}
+                    className={`flex items-center justify-between p-2.5 rounded-[12px] border text-xs transition-colors ${
+                      isCurrent
+                        ? 'border-[#FFB347] bg-[#FFF0DB] font-semibold'
+                        : 'border-[#EADCCF] bg-white'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-6 h-6 rounded-full bg-[#FFFBF5] border border-[#EADCCF] text-[#1A1A1A] flex items-center justify-center font-bold text-[11px]">
+                        {idx + 1}
+                      </span>
+                      <div>
+                        <div className="font-semibold text-[#1A1A1A] flex items-center gap-1">
+                          {item.nickname}
+                          {isCurrent && (
+                            <span className="text-[9px] bg-[#1A3A5F] text-white px-1.5 py-0.2 rounded font-bold">
+                              TÚ
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-[#757575]">
+                          {item.gamesPlayed} partidas · {item.accuracy}% acierto
+                        </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div className="font-black text-amber-500 text-xs">
-                    {item.highestScore} pts
+                    <div className="font-bold text-[#8B1A1A] text-xs">
+                      {item.highestScore} pts
+                    </div>
                   </div>
-                </div>
-              );
-            })
-          )}
+                );
+              })
+            )}
+          </div>
+
+          <button
+            onClick={onClose}
+            className="mt-4 w-full h-[48px] rounded-[12px] bg-[#FFFBF5] hover:bg-[#FFF0DB]/60 text-[#1A1A1A] font-semibold text-xs transition-colors border border-[#EADCCF] cursor-pointer"
+          >
+            Cerrar
+          </button>
         </div>
-
-        <button
-          onClick={onClose}
-          className="mt-4 w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs transition-colors"
-        >
-          Cerrar
-        </button>
       </div>
     </div>
   );
