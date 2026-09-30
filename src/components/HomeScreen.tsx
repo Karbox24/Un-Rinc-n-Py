@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
-import { Sparkles, Play, Shield, Award, CheckCircle2, Flame, BookOpen, Shuffle } from 'lucide-react';
+import { Sparkles, Play, Shield, Award, CheckCircle2, Flame, BookOpen, Shuffle, BarChart3, Trophy } from 'lucide-react';
 import { AVATAR_OPTIONS } from '../lib/utils';
 
 interface HomeScreenProps {
   nickname: string;
   avatar: string;
   questionMode: 'test10' | 'all';
+  personalRecord?: number;
   onStartGame: (nick: string, avatar: string, mode: 'test10' | 'all') => void;
   onOpenAdmin: () => void;
   onOpenRanking: () => void;
+  onOpenStats?: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   nickname: initialNick,
   avatar: initialAvatar,
   questionMode: initialMode,
+  personalRecord = 0,
   onStartGame,
   onOpenAdmin,
   onOpenRanking,
+  onOpenStats,
 }) => {
   const [nick, setNick] = useState(initialNick);
   const [selectedAvatar, setSelectedAvatar] = useState(initialAvatar || 'terere');
@@ -104,25 +108,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
 
-        {/* Acceso Rápido a Ranking y Admin en la columna lateral */}
+        {/* Acceso Rápido a Ranking, Estadísticas y Admin en la columna lateral */}
         <div className="grid grid-cols-2 gap-2.5 text-xs font-semibold">
           <button
             type="button"
             onClick={onOpenRanking}
             className="p-3.5 rounded-2xl border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors flex items-center justify-center gap-2 shadow-sm"
           >
-            <Award className="w-4 h-4 text-amber-500" />
+            <Trophy className="w-4 h-4 text-amber-500" />
             Ranking Global
           </button>
           <button
             type="button"
-            onClick={onOpenAdmin}
+            onClick={onOpenStats || onOpenRanking}
             className="p-3.5 rounded-2xl border border-slate-800 bg-slate-900 text-slate-300 hover:bg-slate-800 hover:text-white transition-colors flex items-center justify-center gap-2 shadow-sm"
           >
-            <Shield className="w-4 h-4 text-red-400" />
-            Panel Admin
+            <BarChart3 className="w-4 h-4 text-blue-400" />
+            Mis Estadísticas
           </button>
         </div>
+
+        {/* Récord Personal si ya tiene puntuación */}
+        {personalRecord > 0 && (
+          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-950/40 to-slate-900 border border-amber-500/30 flex items-center justify-between text-xs">
+            <span className="text-amber-300 font-bold flex items-center gap-1.5">
+              <Trophy className="w-4 h-4 text-amber-400" /> Tu Mejor Récord:
+            </span>
+            <span className="font-black text-amber-400 font-mono text-sm">
+              {personalRecord} pts
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Columna Derecha: Formulario de Inicio y Configuración de Partida */}

@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { ShuffledQuestion, GameAnswer, GameSession } from '../types/trivia';
 import { MASTER_PARAGUAY_QUESTIONS, getRandomQuestions } from '../data/questions';
 import { shuffleArray, prepareShuffledQuestion } from '../lib/utils';
-import { recordGameSession } from '../lib/firebase';
+import { recordGameSession, getPlayerRecord } from '../lib/firebase';
 
-export type ScreenState = 'home' | 'quiz' | 'gameover' | 'admin';
+export type ScreenState = 'home' | 'quiz' | 'gameover' | 'ranking' | 'stats' | 'admin';
 
 const NICKNAME_STORAGE_KEY = 'unrinconpy_nickname';
 const AVATAR_STORAGE_KEY = 'unrinconpy_avatar';
@@ -21,11 +21,26 @@ export function useTriviaGame() {
   // Modo de juego: 'test10' (10 preguntas de prueba) o 'all' (banco extendido)
   const [questionMode, setQuestionMode] = useState<'test10' | 'all'>('test10');
 
+  // Sistema de récord del jugador
+  const [personalRecord, setPersonalRecord] = useState<number>(0);
+  const [isNewRecord, setIsNewRecord] = useState<boolean>(false);
+  const [previousRecord, setPreviousRecord] = useState<number>(0);
+
+  // Cargar récord inicial del jugador
+  useEffect(() => {
+    if (nickname.trim()) {
+      getPlayerRecord(nickname).then((rec) => {
+        setPersonalRecord(rec);
+      });
+    }
+  }, [nickname]);
+
   // Estado de la partida actual
   const [gameQuestions, setGameQuestions] = useState<ShuffledQuestion[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [score, setScore] = useState<number>(0);
   const [streak, setStreak] = useState<number>(0);
+  const [maxStreak, setMaxStreak] = useState<number>(0);
   const [correctCount, setCorrectCount] = useState<number>(0);
   const [incorrectCount, setIncorrectCount] = useState<number>(0);
 
@@ -64,6 +79,9 @@ export function useTriviaGame() {
     setAvatar(newAvatar);
     localStorage.setItem(NICKNAME_STORAGE_KEY, newNick);
     localStorage.setItem(AVATAR_STORAGE_KEY, newAvatar);
+    getPlayerRecord(newNick).then((rec) => {
+      setPersonalRecord(rec);
+    });
   };
 
   /**
@@ -89,6 +107,7 @@ export function useTriviaGame() {
       setCurrentIndex(0);
       setScore(0);
       setStreak(0);
+      setMaxStreak(0);
       setCorrectCount(0);
       setIncorrectCount(0);
       setSelectedOption(null);
@@ -96,6 +115,7 @@ export function useTriviaGame() {
       setAnswersHistory([]);
       setDurationSeconds(0);
       setLastSavedSessionId(null);
+      setIsNewRecord(false);
       setHasSubmittedFeedback(false);
       setScreen('quiz');
     },
@@ -121,7 +141,11 @@ export function useTriviaGame() {
 
       if (isCorrect) {
         setScore((prev) => prev + points);
-        setStreak((prev) => prev + 1);
+        setStreak((prev) => {
+          const next = prev + 1;
+          setMaxStreak((m) => Math.max(m, next));
+          return next;
+        });
         setCorrectCount((prev) => prev + 1);
       } else {
         setStreak(0);
@@ -153,6 +177,15 @@ export function useTriviaGame() {
 
       const totalQ = gameQuestions.length || 10;
       const accuracy = Math.round((finalCorrect / totalQ) * 100);
+
+      // Verificar si consiguió un nuevo récord
+      const currentRec = personalRecord;
+      setPreviousRecord(currentRec);
+      const isRecordAchieved = finalScore > 0 && finalScore > currentRec;
+      setIsNewRecord(isRecordAchieved);
+      if (isRecordAchieved) {
+        setPersonalRecord(finalScore);
+      }
 
       // Calcular desglose por categoría
       const categoryBreakdown: Record<string, { correct: number; total: number }> = {};
@@ -188,7 +221,7 @@ export function useTriviaGame() {
         setIsSaving(false);
       }
     },
-    [avatar, durationSeconds, gameQuestions.length, nickname]
+    [avatar, durationSeconds, gameQuestions.length, nickname, personalRecord]
   );
 
   /**
@@ -212,6 +245,10 @@ export function useTriviaGame() {
     questionMode,
     setQuestionMode,
     updatePlayerProfile,
+    personalRecord,
+    isNewRecord,
+    previousRecord,
+    maxStreak,
     gameQuestions,
     currentQuestion: gameQuestions[currentIndex],
     currentIndex,
@@ -233,5 +270,6 @@ export function useTriviaGame() {
     startNewGame,
     handleSelectOption,
     handleNextQuestion,
+    finishGame,
   };
 }

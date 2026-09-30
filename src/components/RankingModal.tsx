@@ -48,13 +48,13 @@ export const RankingModal: React.FC<RankingModalProps> = ({
         </button>
 
         <div className="text-center mb-4">
-          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-wider text-amber-500 bg-amber-50 dark:bg-amber-950/50 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800 mb-1">
-            <Sparkles className="w-3 h-3" /> Preparado para Fase 2
+          <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider text-amber-400 bg-amber-950/50 px-2.5 py-0.5 rounded-full border border-amber-800/80 mb-1">
+            <Sparkles className="w-3 h-3 text-amber-400" /> Fase 2 • Cuadro de Honor
           </span>
-          <h2 className="text-lg font-black text-slate-900 dark:text-white flex items-center justify-center gap-1.5">
+          <h2 className="text-lg font-black text-white flex items-center justify-center gap-1.5">
             <Trophy className="w-5 h-5 text-amber-500" /> Ranking Global
           </h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-slate-400 mt-0.5">
             Los mejores puntajes sincronizados en Firestore
           </p>
         </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Home, Trophy } from 'lucide-react';
+import { Shield, Play, Trophy, BarChart3, Home } from 'lucide-react';
 import { ScreenState } from '../hooks/useTriviaGame';
 
 interface HeaderProps {
@@ -7,6 +7,7 @@ interface HeaderProps {
   onNavigateHome: () => void;
   onOpenAdmin: () => void;
   onOpenRankingModal?: () => void;
+  onNavigateTo?: (screen: ScreenState) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -14,13 +15,24 @@ export const Header: React.FC<HeaderProps> = ({
   onNavigateHome,
   onOpenAdmin,
   onOpenRankingModal,
+  onNavigateTo,
 }) => {
+  const handleNav = (target: ScreenState) => {
+    if (onNavigateTo) {
+      onNavigateTo(target);
+    } else {
+      if (target === 'home') onNavigateHome();
+      if (target === 'admin') onOpenAdmin();
+      if (target === 'ranking' && onOpenRankingModal) onOpenRankingModal();
+    }
+  };
+
   return (
     <header className="w-full bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-30 shadow-md">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-3.5 flex items-center justify-between">
         {/* Marca & Logo */}
         <div 
-          onClick={onNavigateHome}
+          onClick={() => handleNav('home')}
           className="flex items-center gap-3 cursor-pointer select-none group"
         >
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-red-600 via-white to-blue-600 p-[2px] shadow-sm group-hover:scale-105 transition-transform">
@@ -30,11 +42,11 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-extrabold text-lg tracking-tight text-white group-hover:text-amber-400 transition-colors">
+              <span className="font-extrabold text-base sm:text-lg tracking-tight text-white group-hover:text-amber-400 transition-colors">
                 Un Rincón Py
               </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 bg-red-600/90 text-white rounded-full tracking-wider uppercase">
-                Fase 1
+              <span className="text-[10px] font-black px-2 py-0.5 bg-gradient-to-r from-red-600 to-blue-600 text-white rounded-full tracking-wider uppercase shadow-xs">
+                Fase 2
               </span>
             </div>
             <p className="text-xs text-slate-400 font-medium hidden sm:block">
@@ -43,38 +55,64 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Acciones de Navegación Responsive */}
-        <div className="flex items-center gap-2">
-          {currentScreen !== 'home' && (
-            <button
-              onClick={onNavigateHome}
-              title="Volver al Inicio"
-              className="px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5 text-xs font-semibold"
-            >
-              <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">Inicio</span>
-            </button>
-          )}
-
-          {onOpenRankingModal && (
-            <button
-              onClick={onOpenRankingModal}
-              title="Ranking Global (Fase 2)"
-              className="px-3 py-2 rounded-xl text-amber-400 hover:text-amber-300 hover:bg-slate-800 transition-colors flex items-center gap-1.5 text-xs font-semibold border border-amber-400/20"
-            >
-              <Trophy className="w-4 h-4" />
-              <span className="hidden sm:inline">Ranking</span>
-            </button>
-          )}
+        {/* Acciones de Navegación de Escritorio & Tablet */}
+        <nav className="hidden sm:flex items-center gap-1.5">
+          <button
+            onClick={() => handleNav('home')}
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              currentScreen === 'home' || currentScreen === 'quiz' || currentScreen === 'gameover'
+                ? 'bg-slate-800 text-white border border-slate-700'
+                : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+            }`}
+          >
+            <Play className="w-3.5 h-3.5" /> Jugar
+          </button>
 
           <button
-            onClick={onOpenAdmin}
+            onClick={() => handleNav('ranking')}
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              currentScreen === 'ranking'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                : 'text-slate-300 hover:text-amber-300 hover:bg-slate-800/60'
+            }`}
+          >
+            <Trophy className="w-3.5 h-3.5 text-amber-400" /> Ranking
+          </button>
+
+          <button
+            onClick={() => handleNav('stats')}
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              currentScreen === 'stats'
+                ? 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                : 'text-slate-300 hover:text-blue-300 hover:bg-slate-800/60'
+            }`}
+          >
+            <BarChart3 className="w-3.5 h-3.5 text-blue-400" /> Mis Estadísticas
+          </button>
+
+          <div className="h-4 w-px bg-slate-800 mx-1"></div>
+
+          <button
+            onClick={() => handleNav('admin')}
             title="Panel de Administración"
-            className="px-3 py-2 rounded-xl text-slate-300 hover:text-red-400 hover:bg-slate-800 transition-colors flex items-center gap-1.5 text-xs font-semibold relative"
+            className={`px-3 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all ${
+              currentScreen === 'admin'
+                ? 'bg-red-950/60 text-red-300 border border-red-800/80'
+                : 'text-slate-400 hover:text-red-400 hover:bg-slate-800/60'
+            }`}
+          >
+            <Shield className="w-3.5 h-3.5 text-red-500" /> Admin
+          </button>
+        </nav>
+
+        {/* Acceso directo rápido en móviles (Admin) */}
+        <div className="flex sm:hidden items-center gap-1">
+          <button
+            onClick={() => handleNav('admin')}
+            title="Panel de Administración"
+            className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
           >
             <Shield className="w-4 h-4 text-red-500" />
-            <span className="hidden sm:inline">Admin</span>
-            <span className="sm:hidden w-1.5 h-1.5 bg-red-500 rounded-full"></span>
           </button>
         </div>
       </div>

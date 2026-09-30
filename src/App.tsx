@@ -7,9 +7,12 @@ import React, { useState } from 'react';
 import { useTriviaGame } from './hooks/useTriviaGame';
 import { Layout } from './components/Layout';
 import { Header } from './components/Header';
+import { BottomNav } from './components/BottomNav';
 import { HomeScreen } from './components/HomeScreen';
 import { QuizScreen } from './components/QuizScreen';
 import { GameOverScreen } from './components/GameOverScreen';
+import { RankingSection } from './components/RankingSection';
+import { PlayerStatsScreen } from './components/PlayerStatsScreen';
 import { FeedbackModal } from './components/FeedbackModal';
 import { AdminPanel } from './components/AdminPanel';
 import { RankingModal } from './components/RankingModal';
@@ -34,6 +37,8 @@ export default function App() {
     durationSeconds,
     isSaving,
     lastSavedSessionId,
+    personalRecord,
+    isNewRecord,
     isFeedbackModalOpen,
     setIsFeedbackModalOpen,
     hasSubmittedFeedback,
@@ -47,12 +52,20 @@ export default function App() {
 
   return (
     <Layout
+      isQuizActive={screen === 'quiz'}
       header={
         <Header
           currentScreen={screen}
           onNavigateHome={() => setScreen('home')}
           onOpenAdmin={() => setScreen('admin')}
-          onOpenRankingModal={() => setIsRankingModalOpen(true)}
+          onOpenRankingModal={() => setScreen('ranking')}
+          onNavigateTo={(target) => setScreen(target)}
+        />
+      }
+      bottomNav={
+        <BottomNav
+          currentScreen={screen}
+          onNavigate={(target) => setScreen(target)}
         />
       }
     >
@@ -61,9 +74,11 @@ export default function App() {
           nickname={nickname}
           avatar={avatar}
           questionMode={questionMode}
+          personalRecord={personalRecord}
           onStartGame={(nick, avt, mode) => startNewGame(nick, avt, mode)}
           onOpenAdmin={() => setScreen('admin')}
-          onOpenRanking={() => setIsRankingModalOpen(true)}
+          onOpenRanking={() => setScreen('ranking')}
+          onOpenStats={() => setScreen('stats')}
         />
       )}
 
@@ -77,6 +92,8 @@ export default function App() {
           durationSeconds={durationSeconds}
           selectedOption={selectedOption}
           isAnswerRevealed={isAnswerRevealed}
+          nickname={nickname}
+          avatar={avatar}
           onSelectOption={handleSelectOption}
           onNextQuestion={handleNextQuestion}
         />
@@ -94,10 +111,31 @@ export default function App() {
           isSaving={isSaving}
           hasSubmittedFeedback={hasSubmittedFeedback}
           answersHistory={answersHistory}
+          personalRecord={personalRecord}
+          isNewRecord={isNewRecord}
           onPlayAgain={() => startNewGame(nickname, avatar, questionMode)}
           onOpenFeedback={() => setIsFeedbackModalOpen(true)}
-          onOpenRanking={() => setIsRankingModalOpen(true)}
+          onOpenRanking={() => setScreen('ranking')}
+          onOpenStats={() => setScreen('stats')}
           onGoHome={() => setScreen('home')}
+        />
+      )}
+
+      {screen === 'ranking' && (
+        <RankingSection
+          currentPlayerNick={nickname}
+          onGoHome={() => setScreen('home')}
+          onStartNewGame={() => startNewGame(nickname, avatar, questionMode)}
+        />
+      )}
+
+      {screen === 'stats' && (
+        <PlayerStatsScreen
+          nickname={nickname}
+          avatar={avatar}
+          onGoHome={() => setScreen('home')}
+          onStartGame={() => startNewGame(nickname, avatar, questionMode)}
+          onOpenRanking={() => setScreen('ranking')}
         />
       )}
 
@@ -117,7 +155,7 @@ export default function App() {
         }}
       />
 
-      {/* Modal de Ranking Global preparado para Fase 2 */}
+      {/* Modal de Ranking Global */}
       <RankingModal
         isOpen={isRankingModalOpen}
         onClose={() => setIsRankingModalOpen(false)}

@@ -43,35 +43,70 @@ export function getGuaraniHonorificRank(accuracy: number): {
   subtitle: string;
   badge: string;
   color: string;
+  textColor: string;
+  borderColor: string;
+  bgColor: string;
+  icon: string;
 } {
   if (accuracy >= 90) {
     return {
       title: 'Mburuvicha Arandu',
       subtitle: '¡Gran Sabio de la Cultura y Mitos del Paraguay!',
       badge: '🏆 Máximo Honor Guaraní',
-      color: 'from-amber-500 to-yellow-600',
+      color: 'from-amber-400 to-yellow-500',
+      textColor: 'text-amber-400',
+      borderColor: 'border-amber-500/50',
+      bgColor: 'bg-amber-950/40',
+      icon: '👑',
     };
   } else if (accuracy >= 70) {
     return {
       title: 'Guapo / Guapaiterei',
       subtitle: '¡Excelente conocedor de nuestras raíces!',
       badge: '⭐ Orgullo Nacional',
-      color: 'from-emerald-500 to-teal-600',
+      color: 'from-emerald-400 to-teal-500',
+      textColor: 'text-emerald-400',
+      borderColor: 'border-emerald-500/50',
+      bgColor: 'bg-emerald-950/40',
+      icon: '⭐',
     };
   } else if (accuracy >= 50) {
     return {
       title: 'Arandu Pyahu',
       subtitle: '¡Buen camino, tu conocimiento guaraní está floreciendo!',
       badge: '🌿 Camino al Saber',
-      color: 'from-blue-500 to-indigo-600',
+      color: 'from-blue-400 to-indigo-500',
+      textColor: 'text-blue-400',
+      borderColor: 'border-blue-500/50',
+      bgColor: 'bg-blue-950/40',
+      icon: '🌿',
     };
   } else {
     return {
       title: 'Mba’apohára',
       subtitle: '¡Gran esfuerzo! Tomate un tereré y volvé a desafiarte.',
       badge: '🧉 Entusiasta Cultural',
-      color: 'from-orange-500 to-amber-600',
+      color: 'from-orange-400 to-amber-500',
+      textColor: 'text-orange-400',
+      borderColor: 'border-orange-500/50',
+      bgColor: 'bg-orange-950/40',
+      icon: '🧉',
     };
+  }
+}
+
+export function formatDate(isoString: string): string {
+  try {
+    const date = new Date(isoString);
+    if (isNaN(date.getTime())) return 'Reciente';
+    return date.toLocaleDateString('es-PY', {
+      day: '2-digit',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  } catch {
+    return 'Reciente';
   }
 }
 

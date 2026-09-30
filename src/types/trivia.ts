@@ -68,4 +68,26 @@ export interface RankingItem {
   gamesPlayed: number;
   accuracy: number;
   lastPlayed: string;
+  updatedAt?: string;
+}
+
+export interface PlayerStats {
+  nickname: string;
+  avatar: string;
+  highestScore: number;
+  totalGames: number;
+  totalCorrect: number;
+  totalIncorrect: number;
+  totalQuestionsAnswered: number;
+  overallAccuracy: number;
+  bestStreak?: number;
+  averageTimeSeconds?: number;
+  categoryPerformance?: Record<string, { correct: number; total: number }>;
+  recentGames: Array<{
+    date: string;
+    score: number;
+    correctCount: number;
+    totalQuestions: number;
+    durationSeconds: number;
+  }>;
 }
